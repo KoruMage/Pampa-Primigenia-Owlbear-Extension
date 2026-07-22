@@ -126,6 +126,31 @@ body {
   background: var(--accent-2);
 }
 
+.btn:disabled {
+  background: var(--line);
+  color: var(--ink-soft);
+  cursor: default;
+}
+
+.btn--warn {
+  background: var(--warn);
+}
+
+.btn--warn:hover {
+  background: var(--warn);
+  filter: brightness(1.1);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.btn--ghost:hover {
+  background: rgba(122, 46, 29, 0.1);
+}
+
 /* ---- Roster ---- */
 .roster {
   margin-bottom: 16px;
@@ -225,6 +250,13 @@ body {
   background: var(--paper-2);
   padding: 12px;
   margin-bottom: 16px;
+}
+
+.sheet__toolbar {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-bottom: 10px;
 }
 
 .sheet__headline {

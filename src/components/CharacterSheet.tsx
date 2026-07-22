@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { Player } from "@owlbear-rodeo/sdk";
 import {
   ATRIBUTOS_INFO,
@@ -6,6 +7,7 @@ import {
   ESTABILIDAD_LABELS,
   SALUD_LABELS,
 } from "../types";
+import { downloadJSON, slugifyFilename } from "../utils/download";
 import { HorseshoeTrack } from "./HorseshoeTrack";
 import { GuapuraTrack } from "./GuapuraTrack";
 import { PlayerAssign } from "./PlayerAssign";
@@ -17,9 +19,16 @@ interface CharacterSheetProps {
   players: Player[];
   onUpdate: (patch: Partial<Character>) => void;
   onAssign: (ownerId: string | null) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
-/** Ficha completa editable de un personaje de Pampa Primigenia. */
+/**
+ * Ficha completa editable de un personaje de Pampa Primigenia.
+ *
+ * Los cambios se editan en un borrador local y solo se sincronizan con el
+ * resto de la mesa cuando se toca "Guardar cambios" (guardado manual, no
+ * automatico por cada tecla o click).
+ */
 export function CharacterSheet({
   character,
   editable,
@@ -27,18 +36,63 @@ export function CharacterSheet({
   players,
   onUpdate,
   onAssign,
+  onDirtyChange,
 }: CharacterSheetProps) {
   const ro = !editable;
+  const [draft, setDraft] = useState<Character>(character);
+  const [dirty, setDirty] = useState(false);
+
+  // Si llegan cambios externos (de otro cliente) y no hay ediciones locales
+  // sin guardar, se refleja el nuevo estado. Si hay ediciones sin guardar,
+  // se preservan para no perder lo que se esta escribiendo.
+  useEffect(() => {
+    if (!dirty) setDraft(character);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [character]);
+
+  useEffect(() => {
+    onDirtyChange?.(dirty);
+  }, [dirty, onDirtyChange]);
+
+  const update = (patch: Partial<Character>) => {
+    setDraft((prev) => ({ ...prev, ...patch }));
+    setDirty(true);
+  };
+
+  const handleSave = () => {
+    onUpdate(draft);
+    setDirty(false);
+  };
+
+  const handleExport = () => {
+    downloadJSON(`${slugifyFilename(draft.name)}.json`, draft);
+  };
 
   return (
     <div className="sheet">
+      {editable && (
+        <div className="sheet__toolbar">
+          <button
+            type="button"
+            className={`btn ${dirty ? "btn--warn" : ""}`}
+            disabled={!dirty}
+            onClick={handleSave}
+          >
+            {dirty ? "Guardar cambios" : "Guardado"}
+          </button>
+          <button type="button" className="btn btn--ghost" onClick={handleExport}>
+            Exportar personaje
+          </button>
+        </div>
+      )}
+
       <div className="sheet__headline">
         <input
           className="sheet__name"
-          value={character.name}
+          value={draft.name}
           readOnly={ro}
           placeholder="Nombre"
-          onChange={(e) => onUpdate({ name: e.target.value })}
+          onChange={(e) => update({ name: e.target.value })}
         />
         {canAssign && (
           <PlayerAssign
@@ -52,25 +106,25 @@ export function CharacterSheet({
       <div className="field">
         <label>Pertenencia particular</label>
         <input
-          value={character.pertenencia}
+          value={draft.pertenencia}
           readOnly={ro}
-          onChange={(e) => onUpdate({ pertenencia: e.target.value })}
+          onChange={(e) => update({ pertenencia: e.target.value })}
         />
       </div>
 
       <div className="field">
         <label>Rasgo caracteristico</label>
         <input
-          value={character.rasgo}
+          value={draft.rasgo}
           readOnly={ro}
-          onChange={(e) => onUpdate({ rasgo: e.target.value })}
+          onChange={(e) => update({ rasgo: e.target.value })}
         />
       </div>
 
       <div className="sheet__attrs">
         {ATRIBUTOS_INFO.map((info) => {
-          const base = character.atributos[info.key];
-          const degradado = character.degradado[info.degradadoKey];
+          const base = draft.atributos[info.key];
+          const degradado = draft.degradado[info.degradadoKey];
           const effective = degradado ? base - DEGRADADO_PENALTY : base;
           return (
             <div key={info.key} className="attr">
@@ -82,9 +136,9 @@ export function CharacterSheet({
                   value={base}
                   readOnly={ro}
                   onChange={(e) =>
-                    onUpdate({
+                    update({
                       atributos: {
-                        ...character.atributos,
+                        ...draft.atributos,
                         [info.key]: Number(e.target.value) || 0,
                       },
                     })
@@ -99,9 +153,9 @@ export function CharacterSheet({
                 disabled={ro}
                 aria-pressed={degradado}
                 onClick={() =>
-                  onUpdate({
+                  update({
                     degradado: {
-                      ...character.degradado,
+                      ...draft.degradado,
                       [info.degradadoKey]: !degradado,
                     },
                   })
@@ -118,29 +172,29 @@ export function CharacterSheet({
       </div>
 
       <GuapuraTrack
-        value={character.guapura}
+        value={draft.guapura}
         disabled={ro}
-        onChange={(guapura) => onUpdate({ guapura })}
+        onChange={(guapura) => update({ guapura })}
       />
 
       <div className="sheet__tracks">
         <HorseshoeTrack
           title="Salud"
-          values={character.salud}
+          values={draft.salud}
           labels={SALUD_LABELS}
           disabled={ro}
           onToggle={(key, value) =>
-            onUpdate({ salud: { ...character.salud, [key]: value } })
+            update({ salud: { ...draft.salud, [key]: value } })
           }
         />
         <HorseshoeTrack
           title="Estabilidad"
-          values={character.estabilidad}
+          values={draft.estabilidad}
           labels={ESTABILIDAD_LABELS}
           disabled={ro}
           onToggle={(key, value) =>
-            onUpdate({
-              estabilidad: { ...character.estabilidad, [key]: value },
+            update({
+              estabilidad: { ...draft.estabilidad, [key]: value },
             })
           }
         />
@@ -149,22 +203,22 @@ export function CharacterSheet({
       <div className="field">
         <label>Arreos y Aperos</label>
         <textarea
-          value={character.arreos}
+          value={draft.arreos}
           readOnly={ro}
           rows={2}
           placeholder="Pertenencias, equipo, otros..."
-          onChange={(e) => onUpdate({ arreos: e.target.value })}
+          onChange={(e) => update({ arreos: e.target.value })}
         />
       </div>
 
       <div className="field">
         <label>Notas sobre su historia previa</label>
         <textarea
-          value={character.notas}
+          value={draft.notas}
           readOnly={ro}
           rows={3}
           placeholder="Edad, motivaciones, mayor pena o deseo..."
-          onChange={(e) => onUpdate({ notas: e.target.value })}
+          onChange={(e) => update({ notas: e.target.value })}
         />
       </div>
     </div>

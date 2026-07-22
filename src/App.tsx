@@ -36,6 +36,7 @@ function PartyManager() {
   const players = useParty();
   const roster = useRoster();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sheetDirty, setSheetDirty] = useState(false);
 
   const { characters, inventory } = roster.state;
 
@@ -55,10 +56,22 @@ function PartyManager() {
     return <div className="loading">Cargando el fogon...</div>;
   }
 
+  // Evita perder cambios sin guardar al cambiar de ficha seleccionada.
+  const trySelect = (id: string | null) => {
+    if (sheetDirty && id !== selectedId) {
+      const ok = window.confirm(
+        "Tenes cambios sin guardar en esta ficha. Si continuas se van a perder. ¿Continuar de todas formas?",
+      );
+      if (!ok) return;
+    }
+    setSheetDirty(false);
+    setSelectedId(id);
+  };
+
   const handleCreate = () => {
     const c = makeCharacter();
     roster.addCharacter(c);
-    setSelectedId(c.id);
+    trySelect(c.id);
   };
 
   if (isGM) {
@@ -85,10 +98,13 @@ function PartyManager() {
                   character={c}
                   players={players}
                   selected={c.id === selectedId}
-                  onSelect={() => setSelectedId(c.id)}
+                  onSelect={() => trySelect(c.id)}
                   onRemove={() => {
                     roster.removeCharacter(c.id);
-                    if (selectedId === c.id) setSelectedId(null);
+                    if (selectedId === c.id) {
+                      setSheetDirty(false);
+                      setSelectedId(null);
+                    }
                   }}
                 />
               ))}
@@ -105,6 +121,7 @@ function PartyManager() {
             players={players}
             onUpdate={(patch) => roster.updateCharacter(selected.id, patch)}
             onAssign={(ownerId) => roster.assignOwner(selected.id, ownerId)}
+            onDirtyChange={setSheetDirty}
           />
         )}
 
