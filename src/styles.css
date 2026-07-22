@@ -1,0 +1,546 @@
+:root {
+  --paper: #efe7d6;
+  --paper-2: #e5dbc4;
+  --ink: #2c2116;
+  --ink-soft: #5a4a36;
+  --line: #b9a483;
+  --accent: #7a2e1d;
+  --accent-2: #9c5a2c;
+  --warn: #a3341f;
+  --ring: #6b5535;
+  /* Color del "clavo" en cada agujero de la herradura. Transparente por
+     defecto (agujero vacio); la clase .rellena lo pisa localmente. */
+  --color-clavo: transparent;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Georgia", "Times New Roman", serif;
+  color: var(--ink);
+  background: var(--paper);
+  background-image: radial-gradient(
+      circle at 20% 10%,
+      rgba(120, 80, 40, 0.06),
+      transparent 60%
+    ),
+    radial-gradient(circle at 80% 90%, rgba(120, 80, 40, 0.08), transparent 55%);
+  font-size: 14px;
+}
+
+.app,
+.standalone {
+  padding: 12px 14px 32px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.loading,
+.standalone {
+  padding: 24px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+/* ---- Header ---- */
+.header {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.header__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1;
+}
+
+.header__kicker {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.header__main {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.header__sub {
+  margin: 4px 0 0;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.identity {
+  margin: 0 0 14px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: rgba(107, 85, 53, 0.1);
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+/* ---- Sections ---- */
+.section__title {
+  margin: 0;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
+
+.muted {
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.btn {
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.btn:hover {
+  background: var(--accent-2);
+}
+
+/* ---- Roster ---- */
+.roster {
+  margin-bottom: 16px;
+}
+
+.roster__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.roster__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+
+.card--selected {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.card__main {
+  flex: 1;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  display: grid;
+  gap: 2px;
+}
+
+.card__name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.card__owner {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.badge {
+  font-size: 11px;
+  background: rgba(107, 85, 53, 0.15);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+
+.badge--warn {
+  background: rgba(163, 52, 31, 0.18);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.card__remove {
+  border: none;
+  border-left: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 0 12px;
+  font-size: 16px;
+}
+
+.card__remove:hover {
+  background: var(--warn);
+  color: var(--paper);
+}
+
+/* ---- Sheet ---- */
+.sheet {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-2);
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.sheet__headline {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.sheet__name {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+  padding: 2px 0;
+}
+
+.field {
+  margin-bottom: 8px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  margin-bottom: 2px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 5px 7px;
+}
+
+input:read-only,
+textarea:read-only {
+  background: transparent;
+  border-style: dotted;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ---- Atributos ---- */
+.sheet__attrs {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.attr {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.attr__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.attr__name {
+  font-weight: 700;
+}
+
+.attr__value {
+  width: 44px;
+  text-align: center;
+  padding: 2px;
+}
+
+.attr__degradado {
+  margin: 6px 0 2px;
+  width: 100%;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-soft);
+  padding: 3px;
+}
+
+.attr__degradado--on {
+  background: var(--warn);
+  border-color: var(--warn);
+  color: var(--paper);
+}
+
+.attr__degradado:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.attr__eff {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ---- Guapura ---- */
+.guapura {
+  margin: 12px 0;
+  text-align: center;
+}
+
+.guapura__rings {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid var(--ring);
+  background: transparent;
+  cursor: pointer;
+}
+
+.ring--on {
+  background: radial-gradient(circle, var(--accent) 55%, var(--accent-2) 100%);
+  border-color: var(--accent);
+}
+
+.ring:disabled {
+  cursor: default;
+}
+
+/* ---- Tracks (Salud / Estabilidad) como herradura ---- */
+.track__title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  text-align: center;
+}
+
+.sheet__tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 14px 0 22px;
+}
+
+.horseshoe {
+  width: 100%;
+  text-align: center;
+}
+
+/* Aro de metal de la herradura: se dibuja con un borde grueso y
+   border-radius, dejando el borde inferior transparente para que la
+   forma quede abierta hacia abajo (las dos "patas" de la herradura). */
+.horseshoe__frame {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  height: 140px;
+  border: 22px solid var(--ring);
+  border-bottom-color: transparent;
+  border-radius: 50% 50% 40% 40%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+  margin: 6px 0 0;
+}
+
+/* Capa que se superpone exactamente sobre el aro (incluyendo el grosor
+   del borde) para poder ubicar los 5 clavos en porcentaje. */
+.horseshoe__holes {
+  position: absolute;
+  top: -22px;
+  left: -22px;
+  right: -22px;
+  bottom: -22px;
+}
+
+/* Cada clavo es un "agujero" perforado en el metal: siempre visible como
+   un hueco hundido (box-shadow inset), y al marcarse se rellena con un
+   remache tipo boton, con un pequeno brillo para dar sensacion de metal. */
+.nail {
+  --color-clavo: var(--paper-2);
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 2px solid rgba(44, 33, 22, 0.55);
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  background: var(--color-clavo);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.nail.rellena {
+  --color-clavo: var(--warn);
+  border-color: var(--accent);
+  box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 0 5px rgba(163, 52, 31, 0.55);
+}
+
+.nail:not(:disabled):hover {
+  border-color: var(--warn);
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.nail:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.horseshoe__status {
+  margin: 6px 0 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--ink-soft);
+  min-height: 1.2em;
+}
+
+.horseshoe__status--warn {
+  font-style: normal;
+  color: var(--warn);
+}
+
+/* ---- Assign ---- */
+.assign {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 150px;
+}
+
+.assign__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+}
+
+/* ---- Inventory ---- */
+.inventory {
+  border-top: 2px solid var(--ink);
+  padding-top: 10px;
+}
+
+.inventory__add {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.inventory__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inventory__item {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.inventory__qty {
+  width: 52px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.inventory__name {
+  flex: 2;
+}
+
+.inventory__notes {
+  flex: 3;
+}
+
+.inventory__remove {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 9px;
+}
+
+.inventory__remove:hover {
+  background: var(--warn);
+  color: var(--paper);
+  border-color: var(--warn);
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Pampa Primigenia - Party Manager",
+  "version": "1.0.0",
+  "manifest_version": 1,
+  "author": "Koru",
+  "description": "Gestion de PJs de Pampa Primigenia: fichas completas, asignacion de jugadores e inventario de party.",
+  "action": {
+    "title": "Pampa Primigenia",
+    "icon": "/icon.svg",
+    "popover": "/",
+    "height": 700,
+    "width": 480
+  }
+}

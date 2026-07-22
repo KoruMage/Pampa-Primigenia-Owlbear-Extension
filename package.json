@@ -1,0 +1,26 @@
+{
+  "name": "pampa-primigenia-owlbear",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Extension de Owlbear Rodeo para gestionar el grupo de PJs de Pampa Primigenia (Pulp Austral)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=pampa-primigenia-owlbear"
+  },
+  "dependencies": {
+    "@owlbear-rodeo/sdk": "^3.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "wrangler": "^4.86.0"
+  }
+}
