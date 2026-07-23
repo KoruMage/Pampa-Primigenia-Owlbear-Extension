@@ -23,14 +23,14 @@ Extension para gestionar el grupo de personajes de **Pampa Primigenia (Pulp Aust
 - Inventario de party compartido: cualquiera puede agregar, editar o quitar items y todos lo ven en vivo (ahora en su
   propia pestana, junto a la ficha).
 - Ficha completa con todos los campos de la hoja oficial: Nombre, Pertenencia particular, Rasgo caracteristico, Arreos
-  y Aperos, Notas, Atributos (Mate / Viveza / Facon con su estado degradado -2 Lerdo / Aturdio / Cagao), Experiencias,
-  Guapura, Salud y Estabilidad (estas ultimas dos como puntos, en la misma fila).
-- Experiencias: todo personaje arranca con 4 (2 generales +1 a las tiradas, 1 de trasfondo, 1 del item
-  caracteristico). Al terminar una sesion se elige 1: agregar una experiencia nueva, o marcar una existente (si ya
-  estaba marcada, se borra la marca y su bono sube +1).
-- Playbooks by Koru (opcional, lo activa el GM desde una pantalla de Opciones): agrega a la ficha un desplegable de
-  playbook (Vaquero, Payador, Cebador, Soldado, Cura gaucho, El Viejo), con su habilidad, como se recarga y un
-  contador de la meta currency propia de cada playbook (0 a 3).
+  y Aperos, Notas, Atributos (Mate / Viveza / Facon con su estado degradado -2 Lerdo / Aturdio / Cagao), Guapura,
+  Salud y Estabilidad (estas ultimas dos como puntos, en la misma fila).
+- Reglas opcionales (las activa el GM desde una pantalla de Opciones):
+  - Experiencias: todo personaje arranca con 4 (2 generales +1 a las tiradas, 1 de trasfondo, 1 del item
+    caracteristico). Al terminar una sesion se elige 1: agregar una experiencia nueva, o marcar una existente (si ya
+    estaba marcada, se borra la marca y su bono sube +1).
+  - Playbooks by Koru: agrega a la ficha un desplegable de playbook (Vaquero, Payador, Cebador, Soldado, Cura gaucho,
+    El Viejo), con su habilidad, como se recarga y un contador de la meta currency propia de cada playbook (0 a 3).
 
 Todo el estado se guarda en la metadata de la sala de Owlbear, asi que persiste mientras exista la sala y se
 sincroniza en tiempo real entre GM y jugadores.

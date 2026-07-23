@@ -91,8 +91,9 @@ export interface PartyItem {
 export interface PampaState {
   characters: Character[];
   inventory: PartyItem[];
-  // Feature del GM: habilita el campo "Playbook" en la ficha de cada PJ.
-  playbooksEnabled: boolean;
+  // Reglas opcionales, activables por el GM desde la pantalla de Opciones.
+  playbooksEnabled: boolean; // habilita el campo "Playbook" en la ficha de cada PJ.
+  experienciasEnabled: boolean; // habilita la seccion de Experiencias en la ficha.
 }
 
 export const GUAPURA_MAX = 3;
@@ -265,4 +266,5 @@ export const EMPTY_STATE: PampaState = {
   characters: [],
   inventory: [],
   playbooksEnabled: false,
+  experienciasEnabled: false,
 };

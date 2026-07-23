@@ -46,7 +46,8 @@ function PartyManager() {
   const [screen, setScreen] = useState<"main" | "options">("main");
   const [contentTab, setContentTab] = useState<string>("sheet");
 
-  const { characters, inventory, playbooksEnabled } = roster.state;
+  const { characters, inventory, playbooksEnabled, experienciasEnabled } =
+    roster.state;
 
   const myCharacters = useMemo(
     () => characters.filter((c) => c.ownerId === playerId),
@@ -93,6 +94,8 @@ function PartyManager() {
           <OptionsScreen
             playbooksEnabled={playbooksEnabled}
             onTogglePlaybooks={roster.setPlaybooksEnabled}
+            experienciasEnabled={experienciasEnabled}
+            onToggleExperiencias={roster.setExperienciasEnabled}
             onBack={() => setScreen("main")}
           />
         </div>
@@ -164,6 +167,7 @@ function PartyManager() {
                 canAssign
                 players={players}
                 playbooksEnabled={playbooksEnabled}
+                experienciasEnabled={experienciasEnabled}
                 onUpdate={(patch) => roster.updateCharacter(selected.id, patch)}
                 onAssign={(ownerId) => roster.assignOwner(selected.id, ownerId)}
                 onDirtyChange={setSheetDirty}
@@ -207,6 +211,7 @@ function PartyManager() {
             canAssign={false}
             players={players}
             playbooksEnabled={playbooksEnabled}
+            experienciasEnabled={experienciasEnabled}
             onUpdate={(patch) => roster.updateCharacter(c.id, patch)}
             onAssign={() => {}}
           />
@@ -228,16 +233,47 @@ function Header({ subtitle }: { subtitle: string }) {
   );
 }
 
-/** Pantalla de opciones del GM (features de mesa activables/desactivables). */
+interface OptionalRule {
+  id: string;
+  label: string;
+  description: string;
+  enabled: boolean;
+  onToggle: (value: boolean) => void;
+}
+
+/** Pantalla de opciones del GM (reglas opcionales de mesa, activables). */
 function OptionsScreen({
   playbooksEnabled,
   onTogglePlaybooks,
+  experienciasEnabled,
+  onToggleExperiencias,
   onBack,
 }: {
   playbooksEnabled: boolean;
   onTogglePlaybooks: (value: boolean) => void;
+  experienciasEnabled: boolean;
+  onToggleExperiencias: (value: boolean) => void;
   onBack: () => void;
 }) {
+  const rules: OptionalRule[] = [
+    {
+      id: "playbooks",
+      label: "Playbooks by Koru",
+      description:
+        "Activa el desplegable de playbooks (Vaquero, Payador, Cebador, Soldado, Cura gaucho, El Viejo) con su habilidad, como se recarga y un contador de meta currency en la ficha de cada personaje.",
+      enabled: playbooksEnabled,
+      onToggle: onTogglePlaybooks,
+    },
+    {
+      id: "experiencias",
+      label: "Experiencias",
+      description:
+        "Activa la seccion de Experiencias en la ficha: 4 iniciales (2 generales +1 a las tiradas, 1 de trasfondo, 1 del item caracteristico), con boton para agregar nuevas y un marcador que sube +1 el bono al confirmarse.",
+      enabled: experienciasEnabled,
+      onToggle: onToggleExperiencias,
+    },
+  ];
+
   return (
     <section className="options">
       <div className="options__head">
@@ -246,19 +282,23 @@ function OptionsScreen({
           ← Volver
         </button>
       </div>
-      <label className="toggle">
-        <input
-          type="checkbox"
-          checked={playbooksEnabled}
-          onChange={(e) => onTogglePlaybooks(e.target.checked)}
-        />
-        Playbooks by Koru
-      </label>
-      <p className="muted">
-        Activa el desplegable de playbooks (Vaquero, Payador, Cebador, Soldado,
-        Cura gaucho, El Viejo) con su habilidad, recarga y meta currency en la
-        ficha de cada personaje.
-      </p>
+
+      <div className="options__group">
+        <h4 className="options__group-title">Reglas opcionales</h4>
+        {rules.map((rule) => (
+          <div key={rule.id} className="options__rule">
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={rule.enabled}
+                onChange={(e) => rule.onToggle(e.target.checked)}
+              />
+              {rule.label}
+            </label>
+            <p className="muted options__rule-desc">{rule.description}</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

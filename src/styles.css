@@ -170,6 +170,31 @@ body {
   margin-bottom: 10px;
 }
 
+.options__group-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
+
+.options__rule {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper-2);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.options__rule .toggle {
+  margin-bottom: 0;
+}
+
+.options__rule-desc {
+  margin: 4px 0 0;
+  font-size: 11px;
+}
+
 /* ---- Tabs ---- */
 .tabs {
   display: flex;

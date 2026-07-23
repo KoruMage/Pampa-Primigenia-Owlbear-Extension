@@ -14,6 +14,7 @@ function readState(metadata: Record<string, unknown>): PampaState {
     characters: raw?.characters ?? [],
     inventory: raw?.inventory ?? [],
     playbooksEnabled: raw?.playbooksEnabled ?? false,
+    experienciasEnabled: raw?.experienciasEnabled ?? false,
   };
 }
 
@@ -130,6 +131,12 @@ export function useRoster() {
     [commit],
   );
 
+  const setExperienciasEnabled = useCallback(
+    (experienciasEnabled: boolean) =>
+      commit({ ...stateRef.current, experienciasEnabled }),
+    [commit],
+  );
+
   return {
     state,
     ready,
@@ -141,6 +148,7 @@ export function useRoster() {
     updateItem,
     removeItem,
     setPlaybooksEnabled,
+    setExperienciasEnabled,
   };
 }
 

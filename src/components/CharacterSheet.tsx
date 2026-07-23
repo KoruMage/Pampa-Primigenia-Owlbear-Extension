@@ -22,6 +22,7 @@ interface CharacterSheetProps {
   canAssign: boolean;
   players: Player[];
   playbooksEnabled?: boolean;
+  experienciasEnabled?: boolean;
   onUpdate: (patch: Partial<Character>) => void;
   onAssign: (ownerId: string | null) => void;
   onDirtyChange?: (dirty: boolean) => void;
@@ -40,6 +41,7 @@ export function CharacterSheet({
   canAssign,
   players,
   playbooksEnabled = false,
+  experienciasEnabled = false,
   onUpdate,
   onAssign,
   onDirtyChange,
@@ -218,11 +220,13 @@ export function CharacterSheet({
         })}
       </div>
 
-      <Experiences
-        experiences={draft.experiencias ?? []}
-        disabled={ro}
-        onChange={(experiencias) => update({ experiencias })}
-      />
+      {experienciasEnabled && (
+        <Experiences
+          experiences={draft.experiencias ?? []}
+          disabled={ro}
+          onChange={(experiencias) => update({ experiencias })}
+        />
+      )}
 
       <GuapuraTrack
         value={draft.guapura}
