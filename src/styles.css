@@ -630,21 +630,24 @@ textarea {
 
 .sheet__tracks {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 18px;
   margin: 14px 0 22px;
 }
 
 .condition-track {
-  width: 100%;
+  flex: 1 1 200px;
+  min-width: 0;
   text-align: center;
 }
 
 .condition-track__pips {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
   margin-top: 4px;
+  flex-wrap: wrap;
 }
 
 .track__status {
