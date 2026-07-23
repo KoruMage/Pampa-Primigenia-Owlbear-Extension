@@ -8,9 +8,6 @@
   --accent-2: #9c5a2c;
   --warn: #a3341f;
   --ring: #6b5535;
-  /* Color del "clavo" en cada agujero de la herradura. Transparente por
-     defecto (agujero vacio); la clase .rellena lo pisa localmente. */
-  --color-clavo: transparent;
   color-scheme: light;
 }
 
@@ -43,6 +40,10 @@ body {
   padding: 12px 14px 32px;
   max-width: 640px;
   margin: 0 auto;
+}
+
+.app--gm {
+  max-width: 960px;
 }
 
 .loading,
@@ -151,6 +152,83 @@ body {
   background: rgba(122, 46, 29, 0.1);
 }
 
+/* ---- Top actions / Opciones ---- */
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.options {
+  margin-bottom: 16px;
+}
+
+.options__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/* ---- Tabs ---- */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 12px;
+}
+
+.tabs__btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.tabs__btn:hover {
+  color: var(--ink);
+}
+
+.tabs__btn--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+
+/* ---- Layout GM: roster a la izquierda, ficha a la derecha ---- */
+.gm-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.gm-layout__roster {
+  flex: 0 0 260px;
+  min-width: 0;
+}
+
+.gm-layout__sheet {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .gm-layout {
+    flex-direction: column;
+  }
+
+  .gm-layout__roster {
+    flex-basis: auto;
+    width: 100%;
+  }
+}
+
 /* ---- Roster ---- */
 .roster {
   margin-bottom: 16px;
@@ -161,6 +239,22 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.toggle input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .roster__list {
@@ -305,7 +399,8 @@ select {
 }
 
 input:read-only,
-textarea:read-only {
+textarea:read-only,
+select:disabled {
   background: transparent;
   border-style: dotted;
 }
@@ -376,6 +471,87 @@ textarea {
   color: var(--ink-soft);
 }
 
+/* ---- Experiencias ---- */
+.experiences {
+  margin: 14px 0;
+}
+
+.experiences__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.experiences__hint {
+  margin: 2px 0 8px;
+  font-size: 11px;
+}
+
+.experiences__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.experience {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.experience__mark {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--ring);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.experience__mark:hover:not(:disabled) {
+  border-color: var(--warn);
+}
+
+.experience__mark--on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.experience__mark:disabled {
+  cursor: default;
+}
+
+.experience__text {
+  flex: 1;
+}
+
+.experience__value {
+  flex: 0 0 auto;
+  min-width: 26px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.experience__remove {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 9px;
+}
+
+.experience__remove:hover {
+  background: var(--warn);
+  color: var(--paper);
+  border-color: var(--warn);
+}
+
 /* ---- Guapura ---- */
 .guapura {
   margin: 12px 0;
@@ -407,7 +583,42 @@ textarea {
   cursor: default;
 }
 
-/* ---- Tracks (Salud / Estabilidad) como herradura ---- */
+.playbook-info {
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: rgba(107, 85, 53, 0.08);
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+}
+
+.playbook-info p {
+  margin: 0 0 4px;
+}
+
+.playbook-info p:last-child {
+  margin-bottom: 0;
+}
+
+.playbook-info strong {
+  color: var(--ink);
+}
+
+/* ---- Meta currency de playbook (mismo look que Guapura) ---- */
+.metatrack {
+  margin: 12px 0;
+  text-align: center;
+}
+
+.metatrack__rings {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ---- Tracks (Salud / Estabilidad) como puntos, igual que Guapura ---- */
 .track__title {
   margin: 0 0 4px;
   font-size: 13px;
@@ -424,73 +635,19 @@ textarea {
   margin: 14px 0 22px;
 }
 
-.horseshoe {
+.condition-track {
   width: 100%;
   text-align: center;
 }
 
-/* Aro de metal de la herradura: se dibuja con un borde grueso y
-   border-radius, dejando el borde inferior transparente para que la
-   forma quede abierta hacia abajo (las dos "patas" de la herradura). */
-.horseshoe__frame {
-  position: relative;
-  display: inline-block;
-  width: 120px;
-  height: 140px;
-  border: 22px solid var(--ring);
-  border-bottom-color: transparent;
-  border-radius: 50% 50% 40% 40%;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-  margin: 6px 0 0;
+.condition-track__pips {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 4px;
 }
 
-/* Capa que se superpone exactamente sobre el aro (incluyendo el grosor
-   del borde) para poder ubicar los 5 clavos en porcentaje. */
-.horseshoe__holes {
-  position: absolute;
-  top: -22px;
-  left: -22px;
-  right: -22px;
-  bottom: -22px;
-}
-
-/* Cada clavo es un "agujero" perforado en el metal: siempre visible como
-   un hueco hundido (box-shadow inset), y al marcarse se rellena con un
-   remache tipo boton, con un pequeno brillo para dar sensacion de metal. */
-.nail {
-  --color-clavo: var(--paper-2);
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  border: 2px solid rgba(44, 33, 22, 0.55);
-  border-radius: 50%;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-  background: var(--color-clavo);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
-  transition: background-color 0.15s ease, border-color 0.15s ease,
-    box-shadow 0.15s ease, transform 0.1s ease;
-}
-
-.nail.rellena {
-  --color-clavo: var(--warn);
-  border-color: var(--accent);
-  box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.35),
-    inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 0 5px rgba(163, 52, 31, 0.55);
-}
-
-.nail:not(:disabled):hover {
-  border-color: var(--warn);
-  transform: translate(-50%, -50%) scale(1.15);
-}
-
-.nail:disabled {
-  cursor: default;
-  opacity: 0.85;
-}
-
-.horseshoe__status {
+.track__status {
   margin: 6px 0 0;
   text-align: center;
   font-size: 13px;
@@ -500,7 +657,7 @@ textarea {
   min-height: 1.2em;
 }
 
-.horseshoe__status--warn {
+.track__status--warn {
   font-style: normal;
   color: var(--warn);
 }

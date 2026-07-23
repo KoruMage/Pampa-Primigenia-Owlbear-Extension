@@ -5,11 +5,15 @@ import {
   Character,
   DEGRADADO_PENALTY,
   ESTABILIDAD_LABELS,
+  PLAYBOOK_META_MAX,
+  PLAYBOOKS,
   SALUD_LABELS,
 } from "../types";
 import { downloadJSON, slugifyFilename } from "../utils/download";
-import { HorseshoeTrack } from "./HorseshoeTrack";
+import { ConditionTrack } from "./ConditionTrack";
+import { Experiences } from "./Experiences";
 import { GuapuraTrack } from "./GuapuraTrack";
+import { PipTrack } from "./PipTrack";
 import { PlayerAssign } from "./PlayerAssign";
 
 interface CharacterSheetProps {
@@ -17,6 +21,7 @@ interface CharacterSheetProps {
   editable: boolean;
   canAssign: boolean;
   players: Player[];
+  playbooksEnabled?: boolean;
   onUpdate: (patch: Partial<Character>) => void;
   onAssign: (ownerId: string | null) => void;
   onDirtyChange?: (dirty: boolean) => void;
@@ -34,6 +39,7 @@ export function CharacterSheet({
   editable,
   canAssign,
   players,
+  playbooksEnabled = false,
   onUpdate,
   onAssign,
   onDirtyChange,
@@ -41,6 +47,8 @@ export function CharacterSheet({
   const ro = !editable;
   const [draft, setDraft] = useState<Character>(character);
   const [dirty, setDirty] = useState(false);
+  const selectedPlaybook =
+    PLAYBOOKS.find((p) => p.id === draft.playbookId) ?? null;
 
   // Si llegan cambios externos (de otro cliente) y no hay ediciones locales
   // sin guardar, se refleja el nuevo estado. Si hay ediciones sin guardar,
@@ -121,6 +129,45 @@ export function CharacterSheet({
         />
       </div>
 
+      {playbooksEnabled && (
+        <>
+          <div className="field">
+            <label>Playbook</label>
+            <select
+              value={draft.playbookId ?? ""}
+              disabled={ro}
+              onChange={(e) => update({ playbookId: e.target.value })}
+            >
+              <option value="">Sin playbook</option>
+              {PLAYBOOKS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedPlaybook && (
+            <div className="playbook-info">
+              <p>
+                <strong>Habilidad:</strong> {selectedPlaybook.habilidad}
+              </p>
+              <p>
+                <strong>Como se recarga:</strong> {selectedPlaybook.recarga}
+              </p>
+            </div>
+          )}
+
+          <PipTrack
+            title={selectedPlaybook ? selectedPlaybook.metaCurrency : "Meta currency"}
+            value={draft.playbookMetaValue ?? 0}
+            max={PLAYBOOK_META_MAX}
+            disabled={ro}
+            onChange={(v) => update({ playbookMetaValue: v })}
+          />
+        </>
+      )}
+
       <div className="sheet__attrs">
         {ATRIBUTOS_INFO.map((info) => {
           const base = draft.atributos[info.key];
@@ -171,6 +218,12 @@ export function CharacterSheet({
         })}
       </div>
 
+      <Experiences
+        experiences={draft.experiencias ?? []}
+        disabled={ro}
+        onChange={(experiencias) => update({ experiencias })}
+      />
+
       <GuapuraTrack
         value={draft.guapura}
         disabled={ro}
@@ -178,25 +231,19 @@ export function CharacterSheet({
       />
 
       <div className="sheet__tracks">
-        <HorseshoeTrack
+        <ConditionTrack
           title="Salud"
           values={draft.salud}
           labels={SALUD_LABELS}
           disabled={ro}
-          onToggle={(key, value) =>
-            update({ salud: { ...draft.salud, [key]: value } })
-          }
+          onChange={(salud) => update({ salud })}
         />
-        <HorseshoeTrack
+        <ConditionTrack
           title="Estabilidad"
           values={draft.estabilidad}
           labels={ESTABILIDAD_LABELS}
           disabled={ro}
-          onToggle={(key, value) =>
-            update({
-              estabilidad: { ...draft.estabilidad, [key]: value },
-            })
-          }
+          onChange={(estabilidad) => update({ estabilidad })}
         />
       </div>
 

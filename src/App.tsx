@@ -6,7 +6,13 @@ import { useRoster } from "./obr/useRoster";
 import { CharacterCard } from "./components/CharacterCard";
 import { CharacterSheet } from "./components/CharacterSheet";
 import { PartyInventory } from "./components/PartyInventory";
+import { Tabs } from "./components/Tabs";
 import { makeCharacter } from "./types";
+
+const CONTENT_TABS = [
+  { id: "sheet", label: "Ficha" },
+  { id: "inventory", label: "Inventario de la party" },
+];
 
 export default function App() {
   const [available, setAvailable] = useState<boolean | null>(null);
@@ -37,8 +43,10 @@ function PartyManager() {
   const roster = useRoster();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetDirty, setSheetDirty] = useState(false);
+  const [screen, setScreen] = useState<"main" | "options">("main");
+  const [contentTab, setContentTab] = useState<string>("sheet");
 
-  const { characters, inventory } = roster.state;
+  const { characters, inventory, playbooksEnabled } = roster.state;
 
   const myCharacters = useMemo(
     () => characters.filter((c) => c.ownerId === playerId),
@@ -76,61 +84,95 @@ function PartyManager() {
 
   if (isGM) {
     const selected = characters.find((c) => c.id === selectedId) ?? null;
+
+    if (screen === "options") {
+      return (
+        <div className="app">
+          <Header subtitle="Vista del Director (GM)" />
+          <IdentityStrip name={playerName} role={role} />
+          <OptionsScreen
+            playbooksEnabled={playbooksEnabled}
+            onTogglePlaybooks={roster.setPlaybooksEnabled}
+            onBack={() => setScreen("main")}
+          />
+        </div>
+      );
+    }
+
     return (
-      <div className="app">
+      <div className="app app--gm">
         <Header subtitle="Vista del Director (GM)" />
         <IdentityStrip name={playerName} role={role} />
 
-        <section className="roster">
-          <div className="roster__head">
-            <h3 className="section__title">Personajes ({characters.length})</h3>
-            <button type="button" className="btn" onClick={handleCreate}>
-              + Nuevo PJ
-            </button>
-          </div>
-          {characters.length === 0 ? (
-            <p className="muted">No hay paisanos en la pampa todavia.</p>
-          ) : (
-            <div className="roster__list">
-              {characters.map((c) => (
-                <CharacterCard
-                  key={c.id}
-                  character={c}
-                  players={players}
-                  selected={c.id === selectedId}
-                  onSelect={() => trySelect(c.id)}
-                  onRemove={() => {
-                    roster.removeCharacter(c.id);
-                    if (selectedId === c.id) {
-                      setSheetDirty(false);
-                      setSelectedId(null);
-                    }
-                  }}
-                />
-              ))}
+        <div className="top-actions">
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={() => setScreen("options")}
+          >
+            ⚙ Opciones
+          </button>
+        </div>
+
+        <div className="gm-layout">
+          <section className="roster gm-layout__roster">
+            <div className="roster__head">
+              <h3 className="section__title">Personajes ({characters.length})</h3>
+              <button type="button" className="btn" onClick={handleCreate}>
+                + Nuevo PJ
+              </button>
             </div>
-          )}
-        </section>
+            {characters.length === 0 ? (
+              <p className="muted">No hay paisanos en la pampa todavia.</p>
+            ) : (
+              <div className="roster__list">
+                {characters.map((c) => (
+                  <CharacterCard
+                    key={c.id}
+                    character={c}
+                    players={players}
+                    selected={c.id === selectedId}
+                    onSelect={() => trySelect(c.id)}
+                    onRemove={() => {
+                      roster.removeCharacter(c.id);
+                      if (selectedId === c.id) {
+                        setSheetDirty(false);
+                        setSelectedId(null);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
 
-        {selected && (
-          <CharacterSheet
-            key={selected.id}
-            character={selected}
-            editable
-            canAssign
-            players={players}
-            onUpdate={(patch) => roster.updateCharacter(selected.id, patch)}
-            onAssign={(ownerId) => roster.assignOwner(selected.id, ownerId)}
-            onDirtyChange={setSheetDirty}
-          />
-        )}
+          <div className="gm-layout__sheet">
+            <Tabs tabs={CONTENT_TABS} active={contentTab} onChange={setContentTab} />
 
-        <PartyInventory
-          items={inventory}
-          onAdd={roster.addItem}
-          onUpdate={roster.updateItem}
-          onRemove={roster.removeItem}
-        />
+            {contentTab === "inventory" ? (
+              <PartyInventory
+                items={inventory}
+                onAdd={roster.addItem}
+                onUpdate={roster.updateItem}
+                onRemove={roster.removeItem}
+              />
+            ) : selected ? (
+              <CharacterSheet
+                key={selected.id}
+                character={selected}
+                editable
+                canAssign
+                players={players}
+                playbooksEnabled={playbooksEnabled}
+                onUpdate={(patch) => roster.updateCharacter(selected.id, patch)}
+                onAssign={(ownerId) => roster.assignOwner(selected.id, ownerId)}
+                onDirtyChange={setSheetDirty}
+              />
+            ) : (
+              <p className="muted">Elegi un personaje de la lista para ver su ficha.</p>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -141,7 +183,16 @@ function PartyManager() {
       <Header subtitle="Vista del jugador" />
       <IdentityStrip name={playerName} role={role} />
 
-      {myCharacters.length === 0 ? (
+      <Tabs tabs={CONTENT_TABS} active={contentTab} onChange={setContentTab} />
+
+      {contentTab === "inventory" ? (
+        <PartyInventory
+          items={inventory}
+          onAdd={roster.addItem}
+          onUpdate={roster.updateItem}
+          onRemove={roster.removeItem}
+        />
+      ) : myCharacters.length === 0 ? (
         <p className="muted">
           Todavia no tenes ningun personaje asignado. Pedile al GM que te
           asigne uno desde su lista, seleccionando tu nombre en el dropdown
@@ -155,18 +206,12 @@ function PartyManager() {
             editable
             canAssign={false}
             players={players}
+            playbooksEnabled={playbooksEnabled}
             onUpdate={(patch) => roster.updateCharacter(c.id, patch)}
             onAssign={() => {}}
           />
         ))
       )}
-
-      <PartyInventory
-        items={inventory}
-        onAdd={roster.addItem}
-        onUpdate={roster.updateItem}
-        onRemove={roster.removeItem}
-      />
     </div>
   );
 }
@@ -180,6 +225,41 @@ function Header({ subtitle }: { subtitle: string }) {
       </div>
       <p className="header__sub">{subtitle}</p>
     </header>
+  );
+}
+
+/** Pantalla de opciones del GM (features de mesa activables/desactivables). */
+function OptionsScreen({
+  playbooksEnabled,
+  onTogglePlaybooks,
+  onBack,
+}: {
+  playbooksEnabled: boolean;
+  onTogglePlaybooks: (value: boolean) => void;
+  onBack: () => void;
+}) {
+  return (
+    <section className="options">
+      <div className="options__head">
+        <h3 className="section__title">Opciones</h3>
+        <button type="button" className="btn btn--ghost" onClick={onBack}>
+          ← Volver
+        </button>
+      </div>
+      <label className="toggle">
+        <input
+          type="checkbox"
+          checked={playbooksEnabled}
+          onChange={(e) => onTogglePlaybooks(e.target.checked)}
+        />
+        Playbooks by Koru
+      </label>
+      <p className="muted">
+        Activa el desplegable de playbooks (Vaquero, Payador, Cebador, Soldado,
+        Cura gaucho, El Viejo) con su habilidad, recarga y meta currency en la
+        ficha de cada personaje.
+      </p>
+    </section>
   );
 }
 
