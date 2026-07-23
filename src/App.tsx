@@ -46,8 +46,13 @@ function PartyManager() {
   const [screen, setScreen] = useState<"main" | "options">("main");
   const [contentTab, setContentTab] = useState<string>("sheet");
 
-  const { characters, inventory, playbooksEnabled, experienciasEnabled } =
-    roster.state;
+  const {
+    characters,
+    inventory,
+    playbooksEnabled,
+    experienciasEnabled,
+    guapuraDieExcluded,
+  } = roster.state;
 
   const myCharacters = useMemo(
     () => characters.filter((c) => c.ownerId === playerId),
@@ -96,6 +101,8 @@ function PartyManager() {
             onTogglePlaybooks={roster.setPlaybooksEnabled}
             experienciasEnabled={experienciasEnabled}
             onToggleExperiencias={roster.setExperienciasEnabled}
+            guapuraDieExcluded={guapuraDieExcluded}
+            onToggleGuapuraDieExcluded={roster.setGuapuraDieExcluded}
             onBack={() => setScreen("main")}
           />
         </div>
@@ -168,6 +175,7 @@ function PartyManager() {
                 players={players}
                 playbooksEnabled={playbooksEnabled}
                 experienciasEnabled={experienciasEnabled}
+                guapuraDieExcluded={guapuraDieExcluded}
                 onUpdate={(patch) => roster.updateCharacter(selected.id, patch)}
                 onAssign={(ownerId) => roster.assignOwner(selected.id, ownerId)}
                 onDirtyChange={setSheetDirty}
@@ -212,6 +220,7 @@ function PartyManager() {
             players={players}
             playbooksEnabled={playbooksEnabled}
             experienciasEnabled={experienciasEnabled}
+            guapuraDieExcluded={guapuraDieExcluded}
             onUpdate={(patch) => roster.updateCharacter(c.id, patch)}
             onAssign={() => {}}
           />
@@ -247,12 +256,16 @@ function OptionsScreen({
   onTogglePlaybooks,
   experienciasEnabled,
   onToggleExperiencias,
+  guapuraDieExcluded,
+  onToggleGuapuraDieExcluded,
   onBack,
 }: {
   playbooksEnabled: boolean;
   onTogglePlaybooks: (value: boolean) => void;
   experienciasEnabled: boolean;
   onToggleExperiencias: (value: boolean) => void;
+  guapuraDieExcluded: boolean;
+  onToggleGuapuraDieExcluded: (value: boolean) => void;
   onBack: () => void;
 }) {
   const rules: OptionalRule[] = [
@@ -271,6 +284,14 @@ function OptionsScreen({
         "Activa la seccion de Experiencias en la ficha: 4 iniciales (2 generales +1 a las tiradas, 1 de trasfondo, 1 del item caracteristico), con boton para agregar nuevas y un marcador que sube +1 el bono al confirmarse.",
       enabled: experienciasEnabled,
       onToggle: onToggleExperiencias,
+    },
+    {
+      id: "guapura-die-excluded",
+      label: "El dado de Guapura no cuenta para ganarla",
+      description:
+        'Al tirar dados usando Guapura (1d6 extra), ese dado no se tiene en cuenta para decidir si se gana 1 punto de Guapura por sacar mas de 12 (solo cuenta 2d6 + caracteristica + experiencia).',
+      enabled: guapuraDieExcluded,
+      onToggle: onToggleGuapuraDieExcluded,
     },
   ];
 

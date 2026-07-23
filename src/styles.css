@@ -577,6 +577,81 @@ textarea {
   border-color: var(--warn);
 }
 
+/* ---- Tirador de dados ---- */
+.dice-roller {
+  margin: 14px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 10px;
+}
+
+.dice-roller__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  margin-top: 6px;
+}
+
+.dice-roller__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-soft);
+  flex: 1 1 160px;
+}
+
+.dice-roller__field select {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 13px;
+}
+
+.dice-roller__guapura {
+  flex: 1 1 220px;
+  margin-bottom: 0;
+}
+
+.dice-result {
+  margin-top: 10px;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  background: rgba(107, 85, 53, 0.08);
+  padding: 8px 10px;
+}
+
+.dice-result--win {
+  border-color: var(--accent);
+  background: rgba(163, 52, 31, 0.12);
+}
+
+.dice-result__total {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dice-result__detail {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.dice-result__outcome {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.dice-result--win .dice-result__outcome {
+  color: var(--warn);
+}
+
 /* ---- Guapura ---- */
 .guapura {
   margin: 12px 0;

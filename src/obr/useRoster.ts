@@ -15,6 +15,7 @@ function readState(metadata: Record<string, unknown>): PampaState {
     inventory: raw?.inventory ?? [],
     playbooksEnabled: raw?.playbooksEnabled ?? false,
     experienciasEnabled: raw?.experienciasEnabled ?? false,
+    guapuraDieExcluded: raw?.guapuraDieExcluded ?? false,
   };
 }
 
@@ -137,6 +138,12 @@ export function useRoster() {
     [commit],
   );
 
+  const setGuapuraDieExcluded = useCallback(
+    (guapuraDieExcluded: boolean) =>
+      commit({ ...stateRef.current, guapuraDieExcluded }),
+    [commit],
+  );
+
   return {
     state,
     ready,
@@ -149,6 +156,7 @@ export function useRoster() {
     removeItem,
     setPlaybooksEnabled,
     setExperienciasEnabled,
+    setGuapuraDieExcluded,
   };
 }
 

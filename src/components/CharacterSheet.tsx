@@ -5,12 +5,14 @@ import {
   Character,
   DEGRADADO_PENALTY,
   ESTABILIDAD_LABELS,
+  GUAPURA_MAX,
   PLAYBOOK_META_MAX,
   PLAYBOOKS,
   SALUD_LABELS,
 } from "../types";
 import { downloadJSON, slugifyFilename } from "../utils/download";
 import { ConditionTrack } from "./ConditionTrack";
+import { DiceRoller } from "./DiceRoller";
 import { Experiences } from "./Experiences";
 import { GuapuraTrack } from "./GuapuraTrack";
 import { PipTrack } from "./PipTrack";
@@ -23,6 +25,7 @@ interface CharacterSheetProps {
   players: Player[];
   playbooksEnabled?: boolean;
   experienciasEnabled?: boolean;
+  guapuraDieExcluded?: boolean;
   onUpdate: (patch: Partial<Character>) => void;
   onAssign: (ownerId: string | null) => void;
   onDirtyChange?: (dirty: boolean) => void;
@@ -42,6 +45,7 @@ export function CharacterSheet({
   players,
   playbooksEnabled = false,
   experienciasEnabled = false,
+  guapuraDieExcluded = false,
   onUpdate,
   onAssign,
   onDirtyChange,
@@ -51,6 +55,15 @@ export function CharacterSheet({
   const [dirty, setDirty] = useState(false);
   const selectedPlaybook =
     PLAYBOOKS.find((p) => p.id === draft.playbookId) ?? null;
+  const attributeOptions = ATRIBUTOS_INFO.map((info) => {
+    const base = draft.atributos[info.key];
+    const degradado = draft.degradado[info.degradadoKey];
+    return {
+      key: info.key,
+      label: info.label,
+      effective: degradado ? base - DEGRADADO_PENALTY : base,
+    };
+  });
 
   // Si llegan cambios externos (de otro cliente) y no hay ediciones locales
   // sin guardar, se refleja el nuevo estado. Si hay ediciones sin guardar,
@@ -232,6 +245,21 @@ export function CharacterSheet({
         value={draft.guapura}
         disabled={ro}
         onChange={(guapura) => update({ guapura })}
+      />
+
+      <DiceRoller
+        attributes={attributeOptions}
+        experiences={experienciasEnabled ? draft.experiencias ?? [] : []}
+        guapura={draft.guapura}
+        guapuraMax={GUAPURA_MAX}
+        guapuraDieExcluded={guapuraDieExcluded}
+        disabled={ro}
+        onSpendGuapura={() =>
+          update({ guapura: Math.max(0, draft.guapura - 1) })
+        }
+        onGainGuapura={() =>
+          update({ guapura: Math.min(GUAPURA_MAX, draft.guapura + 1) })
+        }
       />
 
       <div className="sheet__tracks">

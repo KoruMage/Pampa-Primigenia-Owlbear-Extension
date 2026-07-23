@@ -94,6 +94,9 @@ export interface PampaState {
   // Reglas opcionales, activables por el GM desde la pantalla de Opciones.
   playbooksEnabled: boolean; // habilita el campo "Playbook" en la ficha de cada PJ.
   experienciasEnabled: boolean; // habilita la seccion de Experiencias en la ficha.
+  // Si esta activo, al tirar dados el d6 de Guapura no cuenta para decidir
+  // si se gana 1 punto de Guapura por sacar mas de 12.
+  guapuraDieExcluded: boolean;
 }
 
 export const GUAPURA_MAX = 3;
@@ -267,4 +270,5 @@ export const EMPTY_STATE: PampaState = {
   inventory: [],
   playbooksEnabled: false,
   experienciasEnabled: false,
+  guapuraDieExcluded: false,
 };
