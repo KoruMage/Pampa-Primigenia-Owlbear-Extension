@@ -57,6 +57,21 @@ Luego subi el contenido de `dist/` a tu hosting estatico y usa `https://tu-domin
 
 El rol lo determina Owlbear (`OBR.player.getRole()`); no hay que configurarlo aca.
 
+## Store listing (static_root/)
+
+La carpeta `static_root/` tiene los assets para publicar la extension en el listado/store de Owlbear Rodeo (banner,
+icono, favicon y la descripcion en `store.md` con el formato que pide Owlbear). No forma parte del bundle de Vite:
+`npm run deploy` los copia a `dist/` antes de subir, para que queden servidos en la raiz del sitio (por ejemplo
+`https://pampa-primigenia-owlbear.pages.dev/store.md`).
+
+```
+static_root/
+  banner.jpg         # imagen del listado (usada en store.md)
+  favicon.ico
+  icon.svg
+  store.md           # metadata + descripcion para el store de Owlbear
+```
+
 ## Estructura
 
 ```
