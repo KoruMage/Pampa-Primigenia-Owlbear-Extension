@@ -3,6 +3,7 @@ import OBR from "@owlbear-rodeo/sdk";
 import { useRole } from "./obr/useRole";
 import { useParty } from "./obr/useParty";
 import { useRoster } from "./obr/useRoster";
+import { broadcastDiceRoll, useDiceRollFeed } from "./obr/useDiceRollFeed";
 import { CharacterCard } from "./components/CharacterCard";
 import { CharacterSheet } from "./components/CharacterSheet";
 import { PartyInventory } from "./components/PartyInventory";
@@ -41,6 +42,7 @@ function PartyManager() {
   const { isGM, playerId, playerName, role } = useRole();
   const players = useParty();
   const roster = useRoster();
+  useDiceRollFeed();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sheetDirty, setSheetDirty] = useState(false);
   const [screen, setScreen] = useState<"main" | "options">("main");
@@ -179,6 +181,7 @@ function PartyManager() {
                 onUpdate={(patch) => roster.updateCharacter(selected.id, patch)}
                 onAssign={(ownerId) => roster.assignOwner(selected.id, ownerId)}
                 onDirtyChange={setSheetDirty}
+                onDiceRoll={broadcastDiceRoll}
               />
             ) : (
               <p className="muted">Elegi un personaje de la lista para ver su ficha.</p>
@@ -223,6 +226,7 @@ function PartyManager() {
             guapuraDieExcluded={guapuraDieExcluded}
             onUpdate={(patch) => roster.updateCharacter(c.id, patch)}
             onAssign={() => {}}
+            onDiceRoll={broadcastDiceRoll}
           />
         ))
       )}

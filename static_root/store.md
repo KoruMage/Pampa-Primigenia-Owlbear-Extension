@@ -25,8 +25,10 @@ Extension para gestionar el grupo de personajes de **Pampa Primigenia (Pulp Aust
 - Ficha completa con todos los campos de la hoja oficial: Nombre, Pertenencia particular, Rasgo caracteristico, Arreos
   y Aperos, Notas, Atributos (Mate / Viveza / Facon con su estado degradado -2 Lerdo / Aturdio / Cagao), Guapura,
   Salud y Estabilidad (estas ultimas dos como puntos, en la misma fila).
-- Tirar dados: 2d6 + la caracteristica elegida + una experiencia elegida (puede quedar vacia) + 1d6 extra si se gasta
-  1 punto de Guapura. Muestra un cartel con el detalle de la tirada. Con mas de 12 se gana 1 punto de Guapura.
+- Tirar dados: cada caracteristica tiene su propio boton 🎲. La tirada es 2d6 + la caracteristica elegida + una
+  experiencia elegida (puede quedar vacia) + 1d6 extra si se gasta 1 punto de Guapura. Muestra un cartel con el
+  detalle y le avisa a todos los demas conectados con una notificacion de Owlbear. Con mas de 12 se gana 1 punto de
+  Guapura.
 - Reglas opcionales (las activa el GM desde una pantalla de Opciones):
   - Experiencias: todo personaje arranca con 4 (2 generales +1 a las tiradas, 1 de trasfondo, 1 del item
     caracteristico). Al terminar una sesion se elige 1: agregar una experiencia nueva, o marcar una existente (si ya

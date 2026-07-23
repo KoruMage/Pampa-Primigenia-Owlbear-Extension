@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Player } from "@owlbear-rodeo/sdk";
 import {
   ATRIBUTOS_INFO,
@@ -12,7 +12,7 @@ import {
 } from "../types";
 import { downloadJSON, slugifyFilename } from "../utils/download";
 import { ConditionTrack } from "./ConditionTrack";
-import { DiceRoller } from "./DiceRoller";
+import { DiceRoller, DiceRollerHandle, DiceRollSummary } from "./DiceRoller";
 import { Experiences } from "./Experiences";
 import { GuapuraTrack } from "./GuapuraTrack";
 import { PipTrack } from "./PipTrack";
@@ -29,6 +29,7 @@ interface CharacterSheetProps {
   onUpdate: (patch: Partial<Character>) => void;
   onAssign: (ownerId: string | null) => void;
   onDirtyChange?: (dirty: boolean) => void;
+  onDiceRoll?: (payload: DiceRollSummary & { characterName: string }) => void;
 }
 
 /**
@@ -49,10 +50,12 @@ export function CharacterSheet({
   onUpdate,
   onAssign,
   onDirtyChange,
+  onDiceRoll,
 }: CharacterSheetProps) {
   const ro = !editable;
   const [draft, setDraft] = useState<Character>(character);
   const [dirty, setDirty] = useState(false);
+  const diceRollerRef = useRef<DiceRollerHandle>(null);
   const selectedPlaybook =
     PLAYBOOKS.find((p) => p.id === draft.playbookId) ?? null;
   const attributeOptions = ATRIBUTOS_INFO.map((info) => {
@@ -228,6 +231,15 @@ export function CharacterSheet({
               <span className="attr__eff">
                 = <strong>{effective}</strong>
               </span>
+              <button
+                type="button"
+                className="attr__roll"
+                disabled={ro}
+                title={`Tirar 2d6 + ${info.label}`}
+                onClick={() => diceRollerRef.current?.roll(info.key)}
+              >
+                🎲
+              </button>
             </div>
           );
         })}
@@ -248,6 +260,7 @@ export function CharacterSheet({
       />
 
       <DiceRoller
+        ref={diceRollerRef}
         attributes={attributeOptions}
         experiences={experienciasEnabled ? draft.experiencias ?? [] : []}
         guapura={draft.guapura}
@@ -259,6 +272,9 @@ export function CharacterSheet({
         }
         onGainGuapura={() =>
           update({ guapura: Math.min(GUAPURA_MAX, draft.guapura + 1) })
+        }
+        onRoll={(r) =>
+          onDiceRoll?.({ ...r, characterName: draft.name || "Personaje" })
         }
       />
 

@@ -3,6 +3,17 @@
 
 export const METADATA_KEY = "com.pampa-primigenia/state";
 
+// Canal usado para avisarle a todos los clientes conectados (GM y jugadores)
+// cuando alguien tira los dados, via OBR.broadcast.
+export const DICE_ROLL_CHANNEL = "com.pampa-primigenia/dice-roll";
+
+export interface DiceRollBroadcast {
+  characterName: string;
+  summary: string;
+  total: number;
+  gainedGuapura: boolean;
+}
+
 /** Atributos base del personaje. */
 export interface Atributos {
   mate: number;
